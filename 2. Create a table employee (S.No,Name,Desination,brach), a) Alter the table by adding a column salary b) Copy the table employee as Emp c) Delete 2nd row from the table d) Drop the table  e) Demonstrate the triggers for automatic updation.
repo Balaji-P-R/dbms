@@ -1,0 +1,52 @@
+-- Create the employee table
+CREATE TABLE employee (
+  S_No INT PRIMARY KEY,
+  Name VARCHAR(50),
+  Designation VARCHAR(50),
+  Branch VARCHAR(50)
+);
+
+-- a) Alter the table by adding a column salary
+ALTER TABLE employee
+ADD COLUMN Salary DECIMAL(10,2);
+
+-- b) Copy the table employee as Emp
+CREATE TABLE Emp AS
+SELECT *
+FROM employee;
+
+-- c) Delete 2nd row from the table
+DELETE FROM employee
+WHERE S_No = (
+  SELECT S_No
+  FROM employee
+  ORDER BY S_No
+  LIMIT 1 OFFSET 1
+);
+
+-- d) Drop the table
+DROP TABLE IF EXISTS employee;
+
+-- e) Demonstrate the triggers for automatic updates
+-- Assuming you want an example of a trigger for automatic updates
+-- whenever the salary column is modified, you can use the following code:
+
+-- Create a new table with a salary trigger
+CREATE TABLE employee (
+  S_No INT PRIMARY KEY,
+  Name VARCHAR(50),
+  Designation VARCHAR(50),
+  Branch VARCHAR(50),
+  Salary DECIMAL(10,2),
+  Last_Update_Date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  Last_Updated_By VARCHAR(50)
+);
+
+-- Create the trigger
+CREATE TRIGGER salary_update_trigger
+BEFORE UPDATE ON employee
+FOR EACH ROW
+BEGIN
+  SET NEW.Last_Update_Date = CURRENT_TIMESTAMP;
+  SET NEW.Last_Updated_By = 'System';
+END;
