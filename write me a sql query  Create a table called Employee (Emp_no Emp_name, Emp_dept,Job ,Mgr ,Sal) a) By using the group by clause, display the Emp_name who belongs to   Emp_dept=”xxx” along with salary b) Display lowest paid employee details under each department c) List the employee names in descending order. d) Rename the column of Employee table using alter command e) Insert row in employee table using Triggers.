@@ -1,0 +1,58 @@
+-- a) Create the Employee table
+CREATE TABLE Employee (
+  Emp_no INT PRIMARY KEY,
+  Emp_name VARCHAR(50),
+  Emp_dept VARCHAR(50),
+  Job VARCHAR(50),
+  Mgr VARCHAR(50),
+  Sal DECIMAL(10,2)
+);
+
+-- b) By using the GROUP BY clause, display the Emp_name who belongs to Emp_dept="xxx" along with salary
+SELECT Emp_name, Sal
+FROM Employee
+WHERE Emp_dept = 'xxx'
+GROUP BY Emp_name, Sal;
+
+-- c) Display lowest paid employee details under each department
+SELECT Emp_dept, Emp_name, Sal
+FROM Employee
+WHERE Sal = (
+  SELECT MIN(Sal)
+  FROM Employee AS e2
+  WHERE e2.Emp_dept = Employee.Emp_dept
+)
+ORDER BY Emp_dept;
+
+-- d) List the employee names in descending order
+SELECT Emp_name
+FROM Employee
+ORDER BY Emp_name DESC;
+
+-- e) Rename the column of Employee table using ALTER command
+ALTER TABLE Employee
+RENAME COLUMN Emp_no TO Emp_id;
+
+-- e) Insert a row in the Employee table using triggers
+-- Assuming you want to automatically insert a row when a new employee is added,
+-- you can use the following code for creating a trigger:
+
+-- Create a new table with a trigger
+CREATE TABLE Employee (
+  Emp_id INT PRIMARY KEY,
+  Emp_name VARCHAR(50),
+  Emp_dept VARCHAR(50),
+  Job VARCHAR(50),
+  Mgr VARCHAR(50),
+  Sal DECIMAL(10,2),
+  Created_Date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create the trigger
+CREATE TRIGGER insert_employee_trigger
+AFTER INSERT ON Employee
+FOR EACH ROW
+BEGIN
+  INSERT INTO Employee_Log (Emp_id, Emp_name, Emp_dept, Job, Mgr, Sal, Log_Date)
+  VALUES (NEW.Emp_id, NEW.Emp_name, NEW.Emp_dept, NEW.Job, NEW.Mgr, NEW.Sal, CURRENT_TIMESTAMP);
+END;
